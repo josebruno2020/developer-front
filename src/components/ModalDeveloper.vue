@@ -1,14 +1,14 @@
 <template>
   <div>
-    <b-button class="btn btn-dark" v-b-modal.modal-prevent-closing>Novo desenvolvedor</b-button>
+    <b-button class="btn btn-dark" id="button-modal-open" v-b-modal.modal-prevent-closing>Novo desenvolvedor</b-button>
 
     <b-modal
         id="modal-prevent-closing"
         ref="modal"
-        title="Novo Desenvolvedor"
+        :title="isEdit ? 'Editar Desenvolvedor' : 'Novo Desenvolvedor'"
         :hide-footer="true"
     >
-      <form ref="form" @submit.prevent="createDeveloper" >
+      <form ref="form" @submit.prevent="submitForm" >
         <b-form-group
             label="Name"
             label-for="name-input"
@@ -20,6 +20,7 @@
               v-model="model.name"
               :state="nameState"
               required
+              :readonly="isReadOnly"
           ></b-form-input>
         </b-form-group>
 
@@ -36,6 +37,7 @@
               required
               :options="sexOptions"
               class="form-select"
+              :disabled="isReadOnly"
           ></b-form-select>
         </b-form-group>
 
@@ -51,6 +53,7 @@
               :state="ageState"
               type="number"
               required
+              :readonly="isReadOnly"
           ></b-form-input>
         </b-form-group>
 
@@ -65,6 +68,7 @@
               v-model="model.hobby"
               :state="hobbyState"
               required
+              :readonly="isReadOnly"
           ></b-form-input>
         </b-form-group>
 
@@ -80,10 +84,11 @@
               :state="dateState"
               type="number"
               required
+              :readonly="isReadOnly"
           ></b-form-datepicker>
         </b-form-group>
         <div class="mt-3">
-          <button type="submit" class="btn btn-sm btn-primary">Salvar</button>
+          <button :disabled="isReadOnly" type="submit" class="btn btn-sm btn-primary">Salvar</button>
         </div>
 
       </form>
@@ -98,11 +103,14 @@ import apiRoutes from "@/helpers/apiRoutes";
 import http from "@/services/http";
 
 export default {
-  name: "ModalNewDeveloper",
+  name: "ModalDeveloper",
   data() {
     return {
       model: new Developer(),
-      sexOptions
+      sexOptions,
+      isEdit: false,
+      developerId: null,
+      isReadOnly: false
     }
   },
   computed: {
@@ -123,6 +131,10 @@ export default {
     }
   },
   methods: {
+    submitForm() {
+      if (!this.isEdit) return this.createDeveloper();
+      return this.editDeveloper();
+    },
     createDeveloper() {
       console.log(this.model)
       http.post(apiRoutes.developers, this.model).then(({data}) => {
@@ -132,10 +144,37 @@ export default {
       }).catch(err => console.log(err))
     },
     closeModal() {
+      this.isEdit = false;
       this.model = new Developer();
+      this.isReadOnly = false;
       this.$nextTick(() => {
         this.$bvModal.hide('modal-prevent-closing')
       })
+    },
+    editDeveloper() {
+      http.put(`${apiRoutes.developers}/${this.developerId}`, this.model).then(() => {
+        alert('Registro atualizado!');
+        this.closeModal();
+        return this.$emit('updated');
+      }).catch(err => console.log(err));
+    },
+    getDeveloper(id) {
+      http.get(`${apiRoutes.developers}/${id}`).then(({data}) => {
+        this.model = data.content;
+      }).catch(err => console.log(err))
+    },
+
+    isModalEdit(id) {
+      this.getDeveloper(id)
+      this.isEdit = true;
+      this.developerId = id;
+      this.isReadOnly = false;
+    },
+
+    isView(id) {
+      this.getDeveloper(id);
+      this.isEdit = false;
+      return this.isReadOnly = true;
     }
   }
 }

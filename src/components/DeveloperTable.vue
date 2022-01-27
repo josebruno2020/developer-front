@@ -3,7 +3,7 @@
     <table class="table">
       <thead>
       <tr>
-        <th>#</th>
+        <th>Uuid</th>
         <th>Nome</th>
         <th>Sexo</th>
         <th>Idade</th>
@@ -18,12 +18,15 @@
         <td>{{ sex }}</td>
         <td>{{ age }}</td>
         <td>{{ new Date(birthdate).toISOString().substr(0, 10).split('-').reverse().join('/') }}</td>
-        <td>
+        <td class="d-flex justify-content-around">
           <button class="btn btn-sm btn-danger" @click="confirm(id)" title="Excluir">
             <b-icon icon="trash"></b-icon>
           </button>
-          <button class="btn btn-sm btn-info" title="Editar">
+          <button class="btn btn-sm btn-warning" title="Editar" @click="goToEditDeveloper(id)">
             <b-icon icon="pencil"></b-icon>
+          </button>
+          <button class="btn btn-sm btn-info" title="Ver" @click="goToReadyOnly(id)">
+            <b-icon icon="eye"></b-icon>
           </button>
         </td>
       </tr>
@@ -74,6 +77,14 @@ export default {
 
     pushNewDeveloper(developer) {
       return this.developers.push(developer);
+    },
+
+    goToEditDeveloper(id) {
+      return this.$emit('isEditDeveloper', id);
+    },
+
+    goToReadyOnly(id) {
+      return this.$emit('isReadyOnly', id);
     }
   }
 }
