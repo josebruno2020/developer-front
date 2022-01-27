@@ -5,11 +5,5 @@ services:
       context: ./
       dockerfile: Dockerfile
     container_name: vue-app
-    networks:
-      - developer-api_laravel
     ports:
       - "8080:80"
-
-networks:
-  developer-api_laravel:
-    external: true

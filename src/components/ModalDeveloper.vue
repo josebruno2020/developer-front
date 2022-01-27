@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-button class="btn btn-dark" id="button-modal-open" v-b-modal.modal-prevent-closing>Novo desenvolvedor</b-button>
+    <b-button class="btn btn-dark" id="button-modal-open" @click="resetModal" v-b-modal.modal-prevent-closing>Novo desenvolvedor</b-button>
 
     <b-modal
         id="modal-prevent-closing"
@@ -131,6 +131,11 @@ export default {
     }
   },
   methods: {
+    resetModal() {
+      this.isEdit = false;
+      this.model = new Developer();
+      this.isReadOnly = false;
+    },
     submitForm() {
       if (!this.isEdit) return this.createDeveloper();
       return this.editDeveloper();
@@ -144,9 +149,7 @@ export default {
       }).catch(err => console.log(err))
     },
     closeModal() {
-      this.isEdit = false;
-      this.model = new Developer();
-      this.isReadOnly = false;
+      this.resetModal();
       this.$nextTick(() => {
         this.$bvModal.hide('modal-prevent-closing')
       })
