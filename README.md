@@ -13,7 +13,7 @@ git clone https://github.com/josebruno2020/developer-front.git
 Para configurar o ambiente docker na sua máquina rode o comando na pasta do projeto:
 
 ```
-docker-compose build && docker-compose up -d 
+cp .env.example .env && docker-compose build && docker-compose up -d
 ```
 
 Este passo pode demorar um pouquinho até que tudo seja configurado.
