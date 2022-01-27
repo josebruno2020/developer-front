@@ -18,6 +18,12 @@ cp .env.example .env && docker-compose build && docker-compose up -d
 
 Este passo pode demorar um pouquinho até que tudo seja configurado.
 
+## Link de acesso
+
+```
+http://localhost:8080/
+```
+
 OBS: por padrão estou usando a porta `8080` para o vue. Certifique-se que esteja livre ou mude no arquivo `docker-compose.yml`
 
 ## OBS - Backend
